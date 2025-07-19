@@ -84,5 +84,13 @@ Visit: http://localhost:5000
 ## Acknowledgements
 This simulator was developed as a project requirement for the Operating Systems course to visualize and analyze CPU scheduling strategies interactively.
 
+## License
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
+
+## Author
+
+Annie Rose Mamitag  
+Email: annierose.mamitag.23@usjr.edu.ph  
+University of San Jose Recoletos  
 
 
