@@ -1,0 +1,584 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CPU Scheduling Simulator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='csv.css') }}" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container" role="main" aria-label="CPU Scheduling Simulator">
+      <section class="left-panel" aria-labelledby="cpu-schedule-title">
+        <h1 id="cpu-schedule-title">CPU SCHEDULING</h1>
+
+        <fieldset class="algorithms" aria-label="Choose Scheduling Algorithm">
+          <legend class="sr-only">Choose Scheduling Algorithm</legend>
+          <label><input type="radio" name="algorithm" value="FCFS" /> FCFS</label>
+          <label><input type="radio" name="algorithm" value="RR" /> RR</label>
+          <label><input type="radio" name="algorithm" value="SRTF" /> SRTF</label>
+          <label><input type="radio" name="algorithm" value="SJF" /> SJF</label>
+          <label><input type="radio" name="algorithm" value="MLFQ" /> MLFQ</label>
+        </fieldset>
+
+        <div class="process-count">
+          <label for="process-number">Number of processes:
+            <input id="process-number" type="number" min="1" max="999" aria-describedby="process-number-desc" />
+          </label>
+          <div id="process-number-desc" class="sr-only">Input number of processes</div>
+        </div>
+        
+
+        <div class="message-display">
+    <label for="message-display">Message Display</label>
+    <div id="message-display" class="message-display-box" aria-live="polite" aria-atomic="true">
+      Waiting for input...
+    </div>
+  </div>
+
+
+
+        <div class="input-mode" role="radiogroup" aria-labelledby="input-mode-label">
+          <span id="input-mode-label" style="font-weight:700;">Select Input Mode:</span>
+          <label><input type="radio" name="input-mode" value="random" /> Random</label>
+          <label><input type="radio" name="input-mode" value="manual" /> Manual</label>
+
+          <div class="time-quantum">
+            <label for="time-quantum-input">Time Quantum:</label>
+            <input id="time-quantum-input" type="number" min="1" max="1000" aria-describedby="Time quantum for RR scheduling" />
+          </div>
+        </div>
+
+        <div class="form-group">
+    <label for="speed">Simulation Speed (ms):</label>
+    <input
+      type="number"
+      id="speed"
+      name="speed"
+      placeholder="Enter speed in milliseconds"
+      min="10"
+      step="10"
+      required
+    />
+  </div>
+
+
+        <div class="process-table-container" tabindex="0" aria-label="Process details input table">
+          <table class="process-table" aria-describedby="table-desc">
+            <caption id="table-desc" class="sr-only">Input table for process ID, arrival time, and burst time</caption>
+            <thead>
+              <tr>
+                <th scope="col">Process ID</th>
+                <th scope="col">Arrival Time</th>
+                <th scope="col">Burst Time</th>
+              </tr>
+            </thead>
+            <tbody id="process-table-body" aria-live="polite" aria-relevant="all">
+
+  </tbody>
+
+          </table>
+        </div>
+      </section>
+
+      <section class="right-panel" aria-label="Process status and simulation control">
+        <div class="title-bar" aria-live="polite" aria-atomic="true">PROCESS STATUS TABLE</div>
+        <div class="status-table-container" tabindex="0" aria-label="Process status table">
+          <table class="status-table" aria-describedby="status-desc">
+            <caption id="status-desc" class="sr-only">Table showing process ID, arrival time, burst time, remaining time, status, and progress</caption>
+            <thead>
+              <tr>
+                <th scope="col">PID</th>
+                <th scope="col">Arrival</th>
+                <th scope="col">Burst</th>
+                <th scope="col">Remaining</th>
+                <th scope="col">Status</th>
+                <th scope="col">Progress</th>
+              </tr>
+            </thead>
+            <tbody aria-live="polite" aria-relevant="all">
+
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stats-controls-container" aria-label="Simulation statistics and controls">
+          <div class="stats-box" aria-live="polite" aria-atomic="true">
+            <p><span class="stats-label">Average Waiting Time</span> : <span class="stats-value" aria-label="Average waiting time value">[ ]</span></p>
+            <p><span class="stats-label">Average Turnaround Time</span> : <span class="stats-value" aria-label="Average turnaround time value">[ ]</span></p>
+            <p><span class="stats-label">CPU Utilization</span> : <span class="stats-value" aria-label="CPU utilization value">[ ]</span></p>
+          </div>
+          <div class="progress-buttons">
+            <div class="progress-label">Overall Progress:</div>
+            <div class="progress-bar-container">
+    <div class="progress-bar">
+      <div id="overall-progress-fill" class="progress-fill"></div>
+      <span id="overall-progress-text" class="progress-text">0%</span>
+    </div>
+  </div>
+
+
+
+            <button id="simulate-btn" type="button" aria-label="Simulate scheduling">Simulate</button>
+            <button id="reset-btn" type="button" aria-label="Reset all inputs and results">Reset All</button>
+          </div>
+        </div>
+
+  <div class="bottom-message-box gantt-container" role="region" aria-label="Gantt Chart Display">
+    <strong>Gantt Chart:</strong>
+    <div id="gantt-chart" style="display: flex; margin-top: 12px; gap: 2px;"></div>
+  </div>
+
+
+        <div class="bottom-bar" aria-label="Simulation speed control">
+    <label for="sim-speed" style="font-weight: 600; margin-right: 8px;">Simulation Speed:</label>
+    <input id="sim-speed" type="number" min="1" max="10000" value="600" style="width: 80px; padding: 4px 8px; border-radius: 10px; border: none; font-weight: bold; text-align: center;" />
+    <small style="color: #aaa; margin-left: 8px;">(Higher = Slower, Lower = Faster)</small>
+  </div>
+
+
+      </section>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+  <script>
+  document.getElementById("simulate-btn").addEventListener("click", async () => {
+    const simSpeedInput = document.getElementById("sim-speed");
+    let speedVal = Math.max(100, Math.min(3000, parseInt(simSpeedInput?.value) || 600));
+    animateProgressBars(speedVal);
+
+    const rows = document.querySelectorAll(".process-table tbody tr");
+    const processes = [];
+
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll("input");
+      const pid = inputs[0].value;
+      const arrival = parseInt(inputs[1].value);
+      const burst = parseInt(inputs[2].value);
+
+      if (pid && !isNaN(arrival) && !isNaN(burst)) {
+        processes.push({ pid, arrival, burst });
+      }
+    });
+
+    if (processes.length === 0) {
+      alert("Please input at least one valid process.");
+      return;
+    }
+
+    fetch("/schedule", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ processes: processes, algorithm: "FCFS", quantum: 2 }) 
+    })
+    .then(response => response.json())
+    .then(data => {
+      const result = data.processes;
+
+      const tbody = document.querySelector(".status-table tbody");
+      tbody.innerHTML = "";
+      let totalTAT = 0, totalWT = 0;
+
+      result.forEach(proc => {
+        const tr = document.createElement("tr");
+        const turnaround = proc.end - proc.arrival;
+        const waiting = proc.start - proc.arrival;
+        totalTAT += turnaround;
+        totalWT += waiting;
+
+        const progressPercent = ((proc.end - proc.start) / proc.burst) * 100;
+
+        tr.innerHTML = `
+          <td>${proc.pid}</td>
+          <td>${proc.arrival}</td>
+          <td>${proc.burst}</td>
+          <td>${proc.start}</td>
+          <td>${proc.end}</td>
+          <td>${turnaround}</td>
+          <td>${waiting}</td>
+          <td>
+            <div class="progress-bar done">
+              <div class="progress-fill" style="width: ${progressPercent}%">
+                ${progressPercent.toFixed(0)}%
+              </div>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+
+      const n = result.length;
+      document.querySelectorAll(".stats-value")[0].textContent = (totalWT / n).toFixed(2);
+      document.querySelectorAll(".stats-value")[1].textContent = (totalTAT / n).toFixed(2);
+      document.querySelectorAll(".stats-value")[2].textContent = "100%";
+
+
+      const ganttContainer = document.getElementById("gantt-chart");
+      ganttContainer.innerHTML = "";
+      ganttContainer.style.backgroundColor = "#1a1a1a";
+      ganttContainer.style.borderRadius = "20px";
+      ganttContainer.style.padding = "4px";
+      ganttContainer.style.overflow = "hidden";
+      ganttContainer.style.display = "flex";
+
+      const totalDuration = result[result.length - 1].end;
+      const colors = [
+        "#00ffae", "#00f0ff", "#ff00aa", "#ff3c00", "#39ff14",
+        "#bf00ff", "#ff007f", "#0099ff", "#ffff00", "#ff4444"
+      ];
+
+      result.forEach((proc, index) => {
+        const bar = document.createElement("div");
+        const duration = proc.end - proc.start;
+        const percent = (duration / totalDuration) * 100;
+
+        bar.style.width = percent + "%";
+        bar.style.backgroundColor = colors[index % colors.length];
+        bar.style.boxShadow = `0 0 4px ${colors[index % colors.length]}`;
+        bar.style.borderRadius = "12px";
+        bar.style.marginRight = "6px";
+        bar.style.height = "32px";
+        bar.style.display = "flex";
+        bar.style.justifyContent = "center";
+        bar.style.alignItems = "center";
+        bar.style.color = "#ffffff";
+        bar.style.fontWeight = "bold";
+        bar.style.fontSize = "13px";
+        bar.textContent = proc.pid;
+
+        ganttContainer.appendChild(bar);
+      });
+
+      animateProgressBars(speedVal);
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      alert("Something went wrong during scheduling.");
+    });
+  });
+</script>
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const processNumberInput = document.getElementById("process-number");
+      const processTableBody = document.getElementById("process-table-body");
+      document.getElementById("sim-speed").value = 600;
+
+      const algoRadios = document.querySelectorAll('input[name="algorithm"]');
+      const timeQuantumDiv = document.querySelector(".time-quantum");
+
+
+      const toggleTimeQuantum = () => {
+        const selectedAlgo = document.querySelector('input[name="algorithm"]:checked');
+        if (selectedAlgo && (selectedAlgo.value === "RR" || selectedAlgo.value === "MLFQ")) {
+          timeQuantumDiv.classList.add("time-quantum-visible");
+        } else {
+          timeQuantumDiv.classList.remove("time-quantum-visible");
+        }
+      };
+
+      algoRadios.forEach(radio => {
+        radio.addEventListener("change", toggleTimeQuantum);
+      });
+
+
+      toggleTimeQuantum();
+        updateMessageDisplay(); 
+
+
+      processNumberInput.addEventListener("input", () => {
+        const count = parseInt(processNumberInput.value) || 0;
+        processTableBody.innerHTML = "";
+
+        for (let i = 0; i < count; i++) {
+          const row = document.createElement("tr");
+
+          const pidCell = document.createElement("td");
+          const atCell = document.createElement("td");
+          const btCell = document.createElement("td");
+
+          const pidInput = document.createElement("input");
+          pidInput.type = "text";
+          pidInput.maxLength = 5;
+          pidInput.placeholder = `P${i + 1}`;
+          pidInput.ariaLabel = `Process ID ${i + 1}`;
+          pidInput.required = true;
+
+          const atInput = document.createElement("input");
+          atInput.type = "number";
+          atInput.min = "0";
+          atInput.placeholder = "0";
+          atInput.ariaLabel = `Arrival Time ${i + 1}`;
+          atInput.required = true;
+          atInput.id = `p${i + 1}-arrival`;
+
+          const btInput = document.createElement("input");
+          btInput.type = "number";
+          btInput.min = "1";
+          btInput.placeholder = "1";
+          btInput.ariaLabel = `Burst Time ${i + 1}`;
+          btInput.required = true;
+          btInput.id = `p${i + 1}-burst`; 
+
+          pidCell.appendChild(pidInput);
+          atCell.appendChild(atInput);
+          btCell.appendChild(btInput);
+
+          row.appendChild(pidCell);
+          row.appendChild(atCell);
+          row.appendChild(btCell);
+
+          processTableBody.appendChild(row);
+
+          const selectedAlgo = document.querySelector('input[name="algorithm"]:checked')?.value;
+  if (selectedAlgo === "Priority" || selectedAlgo === "PriorityNP") {
+    const priorityCell = document.createElement("td");
+
+    const priorityInput = document.createElement("input");
+    priorityInput.type = "number";
+    priorityInput.min = "0";
+    priorityInput.placeholder = "0";
+    priorityInput.ariaLabel = `Priority ${i + 1}`;
+    priorityInput.required = true;
+    priorityInput.id = `p${i + 1}-priority`;
+
+    priorityCell.appendChild(priorityInput);
+    row.appendChild(priorityCell);
+  }
+
+        }
+
+  setTimeout(() => {
+    for (let i = 1; i <= count; i++) {
+      const atInput = document.getElementById(`p${i}-arrival`);
+      const btInput = document.getElementById(`p${i}-burst`);
+      const priorityInput = document.getElementById(`p${i}-priority`);
+
+      atInput?.addEventListener("input", updateMessageDisplay);
+      btInput?.addEventListener("input", updateMessageDisplay);
+      priorityInput?.addEventListener("input", updateMessageDisplay);
+    }
+
+    document.querySelectorAll('input[name="algorithm"]').forEach(radio => {
+      radio.addEventListener("change", updateMessageDisplay);
+    });
+    document.getElementById("process-number").addEventListener("input", updateMessageDisplay);
+
+
+  }, 0);
+
+      });
+    });
+  </script>
+
+  <script>
+  function animateProgressBars(durationMs = 600) {
+    const bars = document.querySelectorAll(".progress-fill:not(#overall-progress-fill)");
+    const overallBar = document.getElementById("overall-progress-fill");
+    const statusCells = [];
+
+    let totalProgress = 0;
+    let totalBurst = 0;
+    let completedCount = 0;
+
+    bars.forEach(bar => {
+      const percentStr = bar.style.width || "100%";
+      const percent = parseFloat(percentStr);
+      const statusCell = bar.closest("tr").children[4];
+      statusCells.push(statusCell);
+
+      const burst = parseFloat(bar.dataset.target);
+      const procStart = parseFloat(bar.dataset.start);
+      const procEnd = parseFloat(bar.dataset.end);
+      const actualProgress = procEnd - procStart;
+
+      totalProgress += actualProgress;
+      totalBurst += burst;
+
+
+      bar.style.transition = "none";
+      bar.style.width = "0%";
+      void bar.offsetWidth;
+      bar.style.transition = `width ${durationMs}ms ease-in-out`;
+      bar.style.width = percentStr;
+
+      statusCell.textContent = "Running";
+
+  
+      let updated = false;
+      const updateStatus = () => {
+        if (updated) return;
+        updated = true;
+
+        const finalPercent = parseFloat(bar.style.width);
+        if (finalPercent >= 99.9) {
+          statusCell.textContent = "Done";
+          completedCount++;
+        }
+
+
+        if (completedCount === bars.length) {
+          updateOverallProgressBar(100, durationMs);
+        }
+      };
+
+      bar.addEventListener("transitionend", updateStatus);
+      setTimeout(updateStatus, durationMs + 50);
+    });
+
+    // Start with current combined progress
+    const initialOverallPercent = (totalProgress / totalBurst) * 100;
+    updateOverallProgressBar(initialOverallPercent, durationMs);
+  }
+
+  function updateOverallProgressBar(percent, durationMs) {
+    const overallBar = document.getElementById("overall-progress-fill");
+    const overallText = document.getElementById("overall-progress-text");
+    const container = overallBar.closest(".progress-bar");
+
+    const currentWidth = parseFloat(overallBar.style.width || "0");
+
+    const rounded = Math.round(percent);
+    container.setAttribute("aria-valuenow", rounded);
+    overallText.textContent = `${rounded}%`;
+
+    if (Math.abs(currentWidth - percent) < 1) return;
+
+    overallBar.style.transition = "none";
+    overallBar.style.width = "0%";
+    void overallBar.offsetWidth;
+
+    overallBar.style.transition = `width ${durationMs}ms ease-in-out`;
+    overallBar.style.width = percent + "%";
+  }
+  function updateMessageDisplay() {
+    const algo = document.querySelector('input[name="algorithm"]:checked')?.value;
+    const numProcesses = parseInt(document.getElementById("process-number").value);
+    const msgBox = document.getElementById("message-display");
+
+    if (!algo || isNaN(numProcesses) || numProcesses < 1) {
+      msgBox.textContent = "Please select algorithm and number of processes.";
+      return;
+    }
+
+    for (let i = 1; i <= numProcesses; i++) {
+      const arrival = document.getElementById(`p${i}-arrival`);
+      const burst = document.getElementById(`p${i}-burst`);
+      const priority = document.getElementById(`p${i}-priority`);
+
+      if (!arrival || !arrival.value) {
+        msgBox.textContent = `Enter arrival time for P${i}`;
+        return;
+      }
+
+      if (!burst || !burst.value) {
+        msgBox.textContent = `Enter burst time for P${i}`;
+        return;
+      }
+
+      if ((algo.toLowerCase() === "priority" || algo.toLowerCase() === "prioritynp") && (!priority || !priority.value)) {
+        msgBox.textContent = `Enter priority for P${i}`;
+        return;
+      }
+    }
+
+    msgBox.textContent = "All inputs are filled ✔ Ready to simulate!";
+  }
+
+  function displayMessage(msg) {
+    const messageBox = document.getElementById("message-display");
+    if (messageBox) {
+      messageBox.textContent = msg;
+      messageBox.style.display = "block";
+    }
+  }
+
+
+
+
+  </script>
+  <script>
+
+  document.getElementById("reset-btn").addEventListener("click", () => {
+   
+    document.querySelectorAll('input[name="algorithm"]').forEach(r => r.checked = false);
+
+
+    document.querySelectorAll('input[name="input-mode"]').forEach(r => r.checked = false);
+
+
+    document.getElementById("process-number").value = "";
+
+
+    document.getElementById("time-quantum-input").value = "";
+
+
+    document.getElementById("sim-speed").value = "";
+
+
+    document.getElementById("message-display").textContent = "...";
+
+
+
+    document.getElementById("process-table-body").innerHTML = "";
+
+    document.querySelector(".status-table tbody").innerHTML = "";
+
+    document.querySelectorAll(".stats-value").forEach(stat => stat.textContent = "[ ]");
+
+    document.getElementById("gantt-chart").innerHTML = "";
+
+    const overallBar = document.getElementById("overall-progress-fill");
+    const overallText = document.getElementById("overall-progress-text");
+
+    overallBar.style.transition = "none";
+    overallBar.style.width = "0%";
+    if (overallText) overallText.textContent = "0%";
+
+    const container = overallBar.closest(".progress-bar");
+    if (container) container.setAttribute("aria-valuenow", "0");
+  });
+  </script>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const algoRadios = document.querySelectorAll('input[name="algorithm"]');
+    const processNumberInput = document.getElementById("process-number");
+    const processTableBody = document.getElementById("process-table-body");
+
+
+    algoRadios.forEach(radio => {
+      radio.addEventListener("change", updateMessageDisplay);
+    });
+
+
+    processNumberInput.addEventListener("input", () => {
+      updateMessageDisplay();
+
+
+      setTimeout(() => {
+        const inputs = processTableBody.querySelectorAll("input");
+        inputs.forEach(input => {
+          input.addEventListener("input", updateMessageDisplay);
+        });
+      }, 50);
+    });
+  });
+
+  </script>
+
+  <script>
+    document.getElementById("sim-speed").addEventListener("input", (e) => {
+      const val = parseInt(e.target.value) || 600;
+      if (val < 1) e.target.value = 1;
+      if (val > 10000) e.target.value = 10000;
+    });
+  </script>
+
+
+
+
+  </body>
+  </html>
