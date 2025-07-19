@@ -74,9 +74,16 @@ Visit: http://localhost:5000
 This simulator was developed as a project requirement for the Operating Systems course to visualize and analyze CPU scheduling strategies interactively.
 
 
+## Screenshot: Directory structure shown in VSCode.
+
 <img width="829" height="223" alt="image" src="https://github.com/user-attachments/assets/0ce9383a-a4b2-4e7a-91c3-d4cb3401a16c" />
 <img width="815" height="200" alt="image" src="https://github.com/user-attachments/assets/3775070f-1f0f-41be-8abb-e5c3e77d5dd2" />
 <img width="1007" height="180" alt="image" src="https://github.com/user-attachments/assets/a7d89560-76a4-46fe-ac82-e4a92e59b399" />
+
+
+## Gui Demo
+<img width="1402" height="401" alt="image" src="https://github.com/user-attachments/assets/61e106b8-f196-4df6-9964-7159b6da81b9" />
+<img width="1384" height="537" alt="image" src="https://github.com/user-attachments/assets/c0027f50-25a4-4e2f-9dac-42199750b40e" />
 
 
 
