@@ -2,13 +2,13 @@
 
 ### Operating Systems – Project 01
 
-## 💡 Overview
+## Overview
 
 This project is a **CPU Scheduling Simulator** built using **Python (Flask)** for the backend and **HTML/CSS/JavaScript** for the frontend. It visually demonstrates the behavior of multiple CPU scheduling algorithms. The project helps users understand and compare algorithm performance in terms of turnaround and response times.
 
 ---
 
-## 🚀 Features
+## Features
 
 - Visual and interactive web-based simulator.
 - Supports **five major scheduling algorithms**:
@@ -26,7 +26,7 @@ This project is a **CPU Scheduling Simulator** built using **Python (Flask)** fo
 
 ---
 
-## 🧠 Technologies Used
+## Technologies Used
 
 - **Backend:** Python 3, Flask
 - **Frontend:** HTML5, CSS3 (custom + Roboto fonts), JavaScript (vanilla)
@@ -34,7 +34,7 @@ This project is a **CPU Scheduling Simulator** built using **Python (Flask)** fo
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```bash
 cpu-scheduling-simulator/
@@ -50,17 +50,12 @@ cpu-scheduling-simulator/
 ├── README.md                # Project documentation
 └── requirements.txt         # Flask dependency (if needed)
 
-## How to run locally
-Install Flask
+
+
+## How to Run Locally
+
+### 1. Install Flask
+
 ```bash
 pip install flask
 
-Run the app
-```bash
-python app.py
-
-Open in browser
-Visit: http://localhost:5000
-
-# 📝 Acknowledgements
-This simulator was developed as a project requirement for the Operating Systems course to visualize and analyze CPU scheduling strategies interactively.
